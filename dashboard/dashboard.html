@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Job Tracker Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0ece3;
+      color: #2c2c2c;
+      padding: 48px 60px;
+      min-height: 100vh;
+    }
+
+    .header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #d6cfc3;
+    }
+
+    .header-left h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 600;
+      color: #3a5a40;
+      letter-spacing: -0.5px;
+    }
+
+    .header-left p {
+      font-size: 13px;
+      color: #8a8070;
+      margin-top: 4px;
+      font-weight: 300;
+      letter-spacing: 0.3px;
+    }
+
+    .export-btn {
+      background: #3a5a40;
+      color: #f0ece3;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      transition: background 0.2s;
+    }
+
+    .export-btn:hover {
+      background: #2d4730;
+    }
+
+    .stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: #fff;
+      padding: 24px 28px;
+      border-radius: 16px;
+      flex: 1;
+      border: 1px solid #e8e2d9;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px;
+      height: 100%;
+      background: #7a9e7e;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .stat-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      color: #3a5a40;
+      font-weight: 600;
+    }
+
+    .stat-card p {
+      font-size: 12px;
+      color: #8a8070;
+      margin-top: 4px;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .table-wrapper {
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid #e8e2d9;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background-color: #3a5a40;
+    }
+
+    th {
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 500;
+      color: #d6e8d8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    td {
+      padding: 16px 20px;
+      font-size: 13px;
+      border-bottom: 1px solid #f0ece3;
+      color: #3a3530;
+      font-weight: 400;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: #f8f5f0;
+    }
+
+    .badge {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      display: inline-block;
+    }
+
+    .Applied   { background: #dceadd; color: #3a5a40; }
+    .Interview { background: #fef3cd; color: #7a5a00; }
+    .Offer     { background: #d4edda; color: #1a5c2a; }
+    .Rejected  { background: #fde8e8; color: #8b2020; }
+
+    .delete-btn {
+      background: none;
+      border: 1px solid #e8d8d8;
+      color: #c17070;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .delete-btn:hover {
+      background: #fde8e8;
+      border-color: #c17070;
+    }
+
+    select.status-select {
+      background: transparent;
+      border: none;
+      color: #3a3530;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 80px;
+      color: #8a8070;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-left">
+      <h1>Job Tracker</h1>
+      <p>All your applications in one place</p>
+    </div>
+    <button class="export-btn" id="exportBtn">Export CSV</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <h2 id="totalCount">0</h2>
+      <p>Total Applied</p>
+    </div>
+    <div class="stat-card">
+      <h2 id="interviewCount">0</h2>
+      <p>Interviews</p>
+    </div>
+    <div class="stat-card">
+      <h2 id="offerCount">0</h2>
+      <p>Offers</p>
+    </div>
+    <div class="stat-card">
+      <h2 id="rejectedCount">0</h2>
+      <p>Rejected</p>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Job Title</th>
+          <th>Company</th>
+          <th>Status</th>
+          <th>Date Applied</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="jobTableBody"></tbody>
+    </table>
+    <div class="empty" id="emptyState" style="display:none;">
+      No applications yet. Start tracking your journey.
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
