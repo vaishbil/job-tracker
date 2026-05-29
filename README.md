@@ -72,6 +72,10 @@ job-tracker/
 
 ---
 
+> 🚧 **Work in Progress** — This project is actively being developed. Features may change!
+
+---
+
 ## 👩‍💻 Author
 
 Made by [vaishbil](https://github.com/vaishbil)
