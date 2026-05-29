@@ -1,4 +1,4 @@
-# 🗂️ Job Tracker — Chrome Extension
+# 🗂️ Job Tracker - Chrome Extension
 
 A Chrome extension to track your job applications directly from your browser — no more spreadsheets or forgetting where you applied!
 
@@ -17,6 +17,7 @@ A Chrome extension to track your job applications directly from your browser —
 
 - [LinkedIn](https://linkedin.com)
 - [Naukri](https://naukri.com)
+- [Indeed](https://indeed.com)
 
 ---
 
