@@ -74,10 +74,18 @@ function scrapeJob() {
     if (site === "indeed") {
       // Indeed job title is in h1 inside the job panel
       if (!title) {
-        const h1 = document.querySelector(
-          'h1.jobsearch-JobInfoHeader-title, h1[class*="jobTitle"], h1[class*="job-title"], h1[data-testid="jobsearch-JobInfoHeader-title"]',
+        const titleEl = document.querySelector(
+          [
+            "h1.jobsearch-JobInfoHeader-title",
+            'h1[class*="jobTitle"]',
+            'h2[class*="jobTitle"]',
+            '[class*="jobsearch-JobInfoHeader"] h1',
+            '[class*="jobsearch-JobInfoHeader"] h2',
+            'h1[data-testid="jobsearch-JobInfoHeader-title"]',
+            'h2[data-testid="jobsearch-JobInfoHeader-title"]',
+          ].join(", "),
         );
-        if (h1) title = h1.innerText.trim().split("\n")[0];
+        if (titleEl) title = titleEl.innerText.trim().split("\n")[0];
       }
       // Indeed company name
       if (!company) {
