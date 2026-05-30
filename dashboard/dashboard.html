@@ -5,11 +5,7 @@
   <title>Job Tracker Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -41,7 +37,6 @@
       color: #8a8070;
       margin-top: 4px;
       font-weight: 300;
-      letter-spacing: 0.3px;
     }
 
     .export-btn {
@@ -54,18 +49,15 @@
       font-family: 'Inter', sans-serif;
       cursor: pointer;
       font-weight: 500;
-      letter-spacing: 0.3px;
       transition: background 0.2s;
     }
 
-    .export-btn:hover {
-      background: #2d4730;
-    }
+    .export-btn:hover { background: #2d4730; }
 
     .stats {
       display: flex;
       gap: 16px;
-      margin-bottom: 40px;
+      margin-bottom: 32px;
     }
 
     .stat-card {
@@ -104,6 +96,63 @@
       text-transform: uppercase;
     }
 
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 8px 20px;
+      border-radius: 30px;
+      border: 1px solid #d6cfc3;
+      background: #fff;
+      color: #8a8070;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn:hover { border-color: #3a5a40; color: #3a5a40; }
+
+    .tab-btn.active {
+      background: #3a5a40;
+      color: #f0ece3;
+      border-color: #3a5a40;
+    }
+
+    .tab-count {
+      background: rgba(255,255,255,0.25);
+      border-radius: 10px;
+      padding: 1px 7px;
+      font-size: 11px;
+    }
+
+    .tab-btn:not(.active) .tab-count {
+      background: #f0ece3;
+      color: #8a8070;
+    }
+
+    /* ── Portal badge in table ── */
+    .portal-badge {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .portal-linkedin { background: #dce8f5; color: #0a66c2; }
+    .portal-indeed   { background: #fff3d6; color: #a3720a; }
+    .portal-naukri   { background: #fde8f0; color: #c2185b; }
+    .portal-unknown  { background: #f0ece3; color: #8a8070; }
+
     .table-wrapper {
       background: #fff;
       border-radius: 20px;
@@ -111,14 +160,9 @@
       overflow: hidden;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    table { width: 100%; border-collapse: collapse; }
 
-    thead {
-      background-color: #3a5a40;
-    }
+    thead { background-color: #3a5a40; }
 
     th {
       padding: 16px 20px;
@@ -128,7 +172,6 @@
       color: #d6e8d8;
       text-transform: uppercase;
       letter-spacing: 1px;
-      font-family: 'Inter', sans-serif;
     }
 
     td {
@@ -136,30 +179,10 @@
       font-size: 13px;
       border-bottom: 1px solid #f0ece3;
       color: #3a3530;
-      font-weight: 400;
     }
 
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    tr:hover td {
-      background-color: #f8f5f0;
-    }
-
-    .badge {
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.3px;
-      display: inline-block;
-    }
-
-    .Applied   { background: #dceadd; color: #3a5a40; }
-    .Interview { background: #fef3cd; color: #7a5a00; }
-    .Offer     { background: #d4edda; color: #1a5c2a; }
-    .Rejected  { background: #fde8e8; color: #8b2020; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: #f8f5f0; }
 
     .delete-btn {
       background: none;
@@ -172,10 +195,7 @@
       transition: all 0.2s;
     }
 
-    .delete-btn:hover {
-      background: #fde8e8;
-      border-color: #c17070;
-    }
+    .delete-btn:hover { background: #fde8e8; border-color: #c17070; }
 
     select.status-select {
       background: transparent;
@@ -225,12 +245,21 @@
     </div>
   </div>
 
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="all">All <span class="tab-count" id="count-all">0</span></button>
+    <button class="tab-btn" data-tab="linkedin">🔵 LinkedIn <span class="tab-count" id="count-linkedin">0</span></button>
+    <button class="tab-btn" data-tab="indeed">🟡 Indeed <span class="tab-count" id="count-indeed">0</span></button>
+    <button class="tab-btn" data-tab="naukri">🟠 Naukri <span class="tab-count" id="count-naukri">0</span></button>
+  </div>
+
   <div class="table-wrapper">
     <table>
       <thead>
         <tr>
           <th>Job Title</th>
           <th>Company</th>
+          <th>Portal</th>
           <th>Status</th>
           <th>Date Applied</th>
           <th>Delete</th>
