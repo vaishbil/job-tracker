@@ -20,8 +20,9 @@ function renderTable(jobs) {
 
   emptyState.style.display = 'none'
 
+  // Each job gets TWO rows — the main row + a hidden note row
   tbody.innerHTML = jobs.map(job => `
-    <tr>
+    <tr class="job-row">
       <td>${job.title}</td>
       <td>${job.company}</td>
       <td>${getPortalLabel(job.site)}</td>
@@ -34,9 +35,54 @@ function renderTable(jobs) {
         </select>
       </td>
       <td>${job.dateApplied}</td>
+      <td>
+        <button class="note-btn ${job.note ? 'has-note' : ''}" data-id="${job.id}">
+          ${job.note ? '📝' : '➕'} Note
+        </button>
+      </td>
       <td><button class="delete-btn" data-id="${job.id}">🗑️</button></td>
     </tr>
+    <tr class="note-row" id="note-row-${job.id}">
+      <td colspan="7">
+        <textarea
+          class="note-input"
+          data-id="${job.id}"
+          placeholder="Add a note... e.g. Applied via referral, follow up on 15th June"
+        >${job.note || ''}</textarea>
+      </td>
+    </tr>
   `).join('')
+
+  // Note button — toggle textarea visibility
+  document.querySelectorAll('.note-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id
+      const noteRow = document.getElementById(`note-row-${id}`)
+      noteRow.classList.toggle('open')
+      if (noteRow.classList.contains('open')) {
+        noteRow.querySelector('.note-input').focus()
+      }
+    })
+  })
+
+  // Auto-save note on every keystroke
+  document.querySelectorAll('.note-input').forEach(textarea => {
+    textarea.addEventListener('input', () => {
+      const id = Number(textarea.dataset.id)
+      const note = textarea.value
+      saveNote(id, note)
+
+      // Update the note button appearance
+      const btn = document.querySelector(`.note-btn[data-id="${id}"]`)
+      if (note.trim()) {
+        btn.classList.add('has-note')
+        btn.textContent = '📝 Note'
+      } else {
+        btn.classList.remove('has-note')
+        btn.textContent = '➕ Note'
+      }
+    })
+  })
 
   document.querySelectorAll('.delete-btn').forEach(btn => {
     btn.addEventListener('click', () => deleteJob(Number(btn.dataset.id)))
@@ -47,33 +93,36 @@ function renderTable(jobs) {
   })
 }
 
+function saveNote(id, note) {
+  chrome.storage.local.get(['jobs'], (result) => {
+    const jobs = result.jobs || []
+    const updated = jobs.map(job => job.id === id ? { ...job, note } : job)
+    chrome.storage.local.set({ jobs: updated })
+  })
+}
+
 function renderStats(jobs) {
   const now = new Date()
   const todayStr = now.toLocaleDateString()
 
-  // Month name
   const monthName = now.toLocaleString('default', { month: 'long' })
   document.getElementById('s-thisMonthLabel').textContent = monthName + ' ' + now.getFullYear()
   document.getElementById('s-todayDate').textContent = todayStr
 
-  // This month
   const thisMonth = jobs.filter(j => {
     const d = new Date(j.dateApplied)
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
   }).length
   document.getElementById('s-thisMonth').textContent = thisMonth
 
-  // This week (last 7 days)
   const weekAgo = new Date(now)
   weekAgo.setDate(now.getDate() - 7)
   const thisWeek = jobs.filter(j => new Date(j.dateApplied) >= weekAgo).length
   document.getElementById('s-thisWeek').textContent = thisWeek
 
-  // Today
   const today = jobs.filter(j => j.dateApplied === todayStr).length
   document.getElementById('s-today').textContent = today
 
-  // Status breakdown bars
   const total = jobs.length || 1
   const nApplied   = jobs.filter(j => j.status === 'Applied').length
   const nInterview = jobs.filter(j => j.status === 'Interview').length
@@ -90,20 +139,18 @@ function renderStats(jobs) {
   document.getElementById('bar-offer').style.width     = (nOffer     / total * 100) + '%'
   document.getElementById('bar-rejected').style.width  = (nRejected  / total * 100) + '%'
 
-  // Portal breakdown bars
   const nLinkedIn = jobs.filter(j => j.site === 'linkedin').length
   const nIndeed   = jobs.filter(j => j.site === 'indeed').length
   const nNaukri   = jobs.filter(j => j.site === 'naukri').length
 
   document.getElementById('n-linkedin-pct').textContent = 'LinkedIn ' + nLinkedIn
-  document.getElementById('n-indeed-pct').textContent   = 'Indeed ' + nIndeed
-  document.getElementById('n-naukri-pct').textContent   = 'Naukri ' + nNaukri
+  document.getElementById('n-indeed-pct').textContent   = 'Indeed '   + nIndeed
+  document.getElementById('n-naukri-pct').textContent   = 'Naukri '   + nNaukri
 
   document.getElementById('bar-linkedin').style.width  = (nLinkedIn / total * 100) + '%'
   document.getElementById('bar-indeed-s').style.width  = (nIndeed   / total * 100) + '%'
   document.getElementById('bar-naukri-s').style.width  = (nNaukri   / total * 100) + '%'
 
-  // Recent 5 jobs
   const recent = [...jobs].reverse().slice(0, 5)
   document.getElementById('recentList').innerHTML = recent.map(j => `
     <li>
@@ -152,7 +199,6 @@ function deleteJob(id) {
   })
 }
 
-// Tab switching
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
@@ -172,12 +218,11 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   })
 })
 
-// Export CSV
 document.getElementById('exportBtn').addEventListener('click', () => {
   if (allJobs.length === 0) return alert('No jobs to export!')
   const rows = [
-    ['Job Title', 'Company', 'Portal', 'Status', 'Date Applied', 'URL'],
-    ...allJobs.map(j => [j.title, j.company, j.site || 'unknown', j.status, j.dateApplied, j.url || ''])
+    ['Job Title', 'Company', 'Portal', 'Status', 'Date Applied', 'Note', 'URL'],
+    ...allJobs.map(j => [j.title, j.company, j.site || 'unknown', j.status, j.dateApplied, j.note || '', j.url || ''])
   ]
   const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n')
   const blob = new Blob([csv], { type: 'text/csv' })
