@@ -96,7 +96,6 @@
       text-transform: uppercase;
     }
 
-    /* ── Tabs ── */
     .tabs {
       display: flex;
       gap: 8px;
@@ -139,7 +138,6 @@
       color: #8a8070;
     }
 
-    /* ── Portal badge in table ── */
     .portal-badge {
       padding: 3px 10px;
       border-radius: 20px;
@@ -161,7 +159,6 @@
     }
 
     table { width: 100%; border-collapse: collapse; }
-
     thead { background-color: #3a5a40; }
 
     th {
@@ -214,6 +211,143 @@
       font-style: italic;
       font-size: 18px;
     }
+
+    /* ── Stats Page ── */
+    #statsPage { display: none; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stats-big-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #e8e2d9;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stats-big-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px; height: 100%;
+      background: #7a9e7e;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .stats-big-card .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px;
+      color: #3a5a40;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .stats-big-card .label {
+      font-size: 12px;
+      color: #8a8070;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 8px;
+    }
+
+    .stats-big-card .sublabel {
+      font-size: 11px;
+      color: #b0a898;
+      margin-top: 4px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stats-panel {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #e8e2d9;
+      padding: 24px 28px;
+    }
+
+    .stats-panel h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      color: #3a5a40;
+      margin-bottom: 20px;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .bar-label {
+      font-size: 12px;
+      color: #8a8070;
+      width: 70px;
+      flex-shrink: 0;
+    }
+
+    .bar-track {
+      flex: 1;
+      background: #f0ece3;
+      border-radius: 8px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 8px;
+      transition: width 0.6s ease;
+    }
+
+    .bar-count {
+      font-size: 12px;
+      color: #3a5a40;
+      font-weight: 500;
+      width: 24px;
+      text-align: right;
+    }
+
+    .portal-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .portal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .recent-list { list-style: none; }
+
+    .recent-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid #f0ece3;
+      font-size: 13px;
+    }
+
+    .recent-list li:last-child { border-bottom: none; }
+
+    .recent-company {
+      color: #8a8070;
+      font-size: 11px;
+      margin-top: 2px;
+    }
   </style>
 </head>
 <body>
@@ -251,24 +385,102 @@
     <button class="tab-btn" data-tab="linkedin">🔵 LinkedIn <span class="tab-count" id="count-linkedin">0</span></button>
     <button class="tab-btn" data-tab="indeed">🟡 Indeed <span class="tab-count" id="count-indeed">0</span></button>
     <button class="tab-btn" data-tab="naukri">🟠 Naukri <span class="tab-count" id="count-naukri">0</span></button>
+    <button class="tab-btn" data-tab="stats">📊 Stats</button>
   </div>
 
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th>Job Title</th>
-          <th>Company</th>
-          <th>Portal</th>
-          <th>Status</th>
-          <th>Date Applied</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody id="jobTableBody"></tbody>
-    </table>
-    <div class="empty" id="emptyState" style="display:none;">
-      No applications yet. Start tracking your journey.
+  <!-- Jobs Table -->
+  <div id="jobsPage">
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Job Title</th>
+            <th>Company</th>
+            <th>Portal</th>
+            <th>Status</th>
+            <th>Date Applied</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="jobTableBody"></tbody>
+      </table>
+      <div class="empty" id="emptyState" style="display:none;">
+        No applications yet. Start tracking your journey.
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Page -->
+  <div id="statsPage">
+    <div class="stats-grid">
+      <div class="stats-big-card">
+        <div class="num" id="s-thisMonth">0</div>
+        <div class="label">This Month</div>
+        <div class="sublabel" id="s-thisMonthLabel"></div>
+      </div>
+      <div class="stats-big-card">
+        <div class="num" id="s-thisWeek">0</div>
+        <div class="label">This Week</div>
+        <div class="sublabel">Last 7 days</div>
+      </div>
+      <div class="stats-big-card">
+        <div class="num" id="s-today">0</div>
+        <div class="label">Today</div>
+        <div class="sublabel" id="s-todayDate"></div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <!-- Status breakdown -->
+      <div class="stats-panel">
+        <h3>Status Breakdown</h3>
+        <div class="bar-row">
+          <div class="bar-label">Applied</div>
+          <div class="bar-track"><div class="bar-fill" id="bar-applied" style="background:#dceadd;width:0%"></div></div>
+          <div class="bar-count" id="n-applied">0</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Interview</div>
+          <div class="bar-track"><div class="bar-fill" id="bar-interview" style="background:#fef3cd;width:0%"></div></div>
+          <div class="bar-count" id="n-interview">0</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Offer</div>
+          <div class="bar-track"><div class="bar-fill" id="bar-offer" style="background:#d4edda;width:0%"></div></div>
+          <div class="bar-count" id="n-offer">0</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Rejected</div>
+          <div class="bar-track"><div class="bar-fill" id="bar-rejected" style="background:#fde8e8;width:0%"></div></div>
+          <div class="bar-count" id="n-rejected">0</div>
+        </div>
+      </div>
+
+      <!-- Portal breakdown -->
+      <div class="stats-panel">
+        <h3>Portal Breakdown</h3>
+        <div class="portal-row">
+          <div class="portal-dot" style="background:#0a66c2"></div>
+          <div class="bar-track"><div class="bar-fill" id="bar-linkedin" style="background:#dce8f5;width:0%"></div></div>
+          <div class="bar-label" style="width:auto;font-size:12px;color:#0a66c2" id="n-linkedin-pct">LinkedIn 0</div>
+        </div>
+        <div class="portal-row">
+          <div class="portal-dot" style="background:#a3720a"></div>
+          <div class="bar-track"><div class="bar-fill" id="bar-indeed-s" style="background:#fff3d6;width:0%"></div></div>
+          <div class="bar-label" style="width:auto;font-size:12px;color:#a3720a" id="n-indeed-pct">Indeed 0</div>
+        </div>
+        <div class="portal-row">
+          <div class="portal-dot" style="background:#c2185b"></div>
+          <div class="bar-track"><div class="bar-fill" id="bar-naukri-s" style="background:#fde8f0;width:0%"></div></div>
+          <div class="bar-label" style="width:auto;font-size:12px;color:#c2185b" id="n-naukri-pct">Naukri 0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent 5 -->
+    <div class="stats-panel">
+      <h3>Recently Applied</h3>
+      <ul class="recent-list" id="recentList"></ul>
     </div>
   </div>
 

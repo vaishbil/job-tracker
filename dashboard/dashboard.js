@@ -47,25 +47,92 @@ function renderTable(jobs) {
   })
 }
 
+function renderStats(jobs) {
+  const now = new Date()
+  const todayStr = now.toLocaleDateString()
+
+  // Month name
+  const monthName = now.toLocaleString('default', { month: 'long' })
+  document.getElementById('s-thisMonthLabel').textContent = monthName + ' ' + now.getFullYear()
+  document.getElementById('s-todayDate').textContent = todayStr
+
+  // This month
+  const thisMonth = jobs.filter(j => {
+    const d = new Date(j.dateApplied)
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+  }).length
+  document.getElementById('s-thisMonth').textContent = thisMonth
+
+  // This week (last 7 days)
+  const weekAgo = new Date(now)
+  weekAgo.setDate(now.getDate() - 7)
+  const thisWeek = jobs.filter(j => new Date(j.dateApplied) >= weekAgo).length
+  document.getElementById('s-thisWeek').textContent = thisWeek
+
+  // Today
+  const today = jobs.filter(j => j.dateApplied === todayStr).length
+  document.getElementById('s-today').textContent = today
+
+  // Status breakdown bars
+  const total = jobs.length || 1
+  const nApplied   = jobs.filter(j => j.status === 'Applied').length
+  const nInterview = jobs.filter(j => j.status === 'Interview').length
+  const nOffer     = jobs.filter(j => j.status === 'Offer').length
+  const nRejected  = jobs.filter(j => j.status === 'Rejected').length
+
+  document.getElementById('n-applied').textContent   = nApplied
+  document.getElementById('n-interview').textContent = nInterview
+  document.getElementById('n-offer').textContent     = nOffer
+  document.getElementById('n-rejected').textContent  = nRejected
+
+  document.getElementById('bar-applied').style.width   = (nApplied   / total * 100) + '%'
+  document.getElementById('bar-interview').style.width = (nInterview / total * 100) + '%'
+  document.getElementById('bar-offer').style.width     = (nOffer     / total * 100) + '%'
+  document.getElementById('bar-rejected').style.width  = (nRejected  / total * 100) + '%'
+
+  // Portal breakdown bars
+  const nLinkedIn = jobs.filter(j => j.site === 'linkedin').length
+  const nIndeed   = jobs.filter(j => j.site === 'indeed').length
+  const nNaukri   = jobs.filter(j => j.site === 'naukri').length
+
+  document.getElementById('n-linkedin-pct').textContent = 'LinkedIn ' + nLinkedIn
+  document.getElementById('n-indeed-pct').textContent   = 'Indeed ' + nIndeed
+  document.getElementById('n-naukri-pct').textContent   = 'Naukri ' + nNaukri
+
+  document.getElementById('bar-linkedin').style.width  = (nLinkedIn / total * 100) + '%'
+  document.getElementById('bar-indeed-s').style.width  = (nIndeed   / total * 100) + '%'
+  document.getElementById('bar-naukri-s').style.width  = (nNaukri   / total * 100) + '%'
+
+  // Recent 5 jobs
+  const recent = [...jobs].reverse().slice(0, 5)
+  document.getElementById('recentList').innerHTML = recent.map(j => `
+    <li>
+      <div>${j.title}</div>
+      <div class="recent-company">${j.company} · ${getPortalLabel(j.site)} · ${j.dateApplied}</div>
+    </li>
+  `).join('')
+}
+
 function loadJobs() {
   chrome.storage.local.get(['jobs'], (result) => {
     allJobs = result.jobs || []
 
-    // Update stats (always based on ALL jobs)
-    document.getElementById('totalCount').textContent = allJobs.length
+    document.getElementById('totalCount').textContent     = allJobs.length
     document.getElementById('interviewCount').textContent = allJobs.filter(j => j.status === 'Interview').length
-    document.getElementById('offerCount').textContent = allJobs.filter(j => j.status === 'Offer').length
-    document.getElementById('rejectedCount').textContent = allJobs.filter(j => j.status === 'Rejected').length
+    document.getElementById('offerCount').textContent     = allJobs.filter(j => j.status === 'Offer').length
+    document.getElementById('rejectedCount').textContent  = allJobs.filter(j => j.status === 'Rejected').length
 
-    // Update tab counts
-    document.getElementById('count-all').textContent = allJobs.length
+    document.getElementById('count-all').textContent      = allJobs.length
     document.getElementById('count-linkedin').textContent = allJobs.filter(j => j.site === 'linkedin').length
-    document.getElementById('count-indeed').textContent = allJobs.filter(j => j.site === 'indeed').length
-    document.getElementById('count-naukri').textContent = allJobs.filter(j => j.site === 'naukri').length
+    document.getElementById('count-indeed').textContent   = allJobs.filter(j => j.site === 'indeed').length
+    document.getElementById('count-naukri').textContent   = allJobs.filter(j => j.site === 'naukri').length
 
-    // Filter by active tab
-    const filtered = currentTab === 'all' ? allJobs : allJobs.filter(j => j.site === currentTab)
-    renderTable(filtered)
+    if (currentTab === 'stats') {
+      renderStats(allJobs)
+    } else {
+      const filtered = currentTab === 'all' ? allJobs : allJobs.filter(j => j.site === currentTab)
+      renderTable(filtered)
+    }
   })
 }
 
@@ -91,8 +158,17 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
     btn.classList.add('active')
     currentTab = btn.dataset.tab
-    const filtered = currentTab === 'all' ? allJobs : allJobs.filter(j => j.site === currentTab)
-    renderTable(filtered)
+
+    if (currentTab === 'stats') {
+      document.getElementById('jobsPage').style.display = 'none'
+      document.getElementById('statsPage').style.display = 'block'
+      renderStats(allJobs)
+    } else {
+      document.getElementById('jobsPage').style.display = 'block'
+      document.getElementById('statsPage').style.display = 'none'
+      const filtered = currentTab === 'all' ? allJobs : allJobs.filter(j => j.site === currentTab)
+      renderTable(filtered)
+    }
   })
 })
 
