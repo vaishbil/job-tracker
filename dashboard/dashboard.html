@@ -176,6 +176,7 @@
       font-size: 13px;
       border-bottom: 1px solid #f0ece3;
       color: #3a3530;
+      vertical-align: top;
     }
 
     tr:last-child td { border-bottom: none; }
@@ -202,6 +203,47 @@
       cursor: pointer;
       font-family: 'Inter', sans-serif;
     }
+
+    /* ── Notes ── */
+    .note-btn {
+      background: none;
+      border: 1px solid #e8e2d9;
+      color: #8a8070;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .note-btn:hover { background: #f0ece3; border-color: #7a9e7e; color: #3a5a40; }
+    .note-btn.has-note { border-color: #7a9e7e; color: #3a5a40; background: #f0f7f0; }
+
+    .note-row { display: none; }
+    .note-row.open { display: table-row; }
+
+    .note-row td {
+      padding: 0 20px 14px 20px;
+      border-bottom: 1px solid #f0ece3;
+    }
+
+    .note-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #e0d9ce;
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      color: #3a3530;
+      background: #faf8f5;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+      height: 70px;
+    }
+
+    .note-input:focus { border-color: #7a9e7e; }
+    .note-input::placeholder { color: #b0a898; }
 
     .empty {
       text-align: center;
@@ -379,7 +421,6 @@
     </div>
   </div>
 
-  <!-- Tabs -->
   <div class="tabs">
     <button class="tab-btn active" data-tab="all">All <span class="tab-count" id="count-all">0</span></button>
     <button class="tab-btn" data-tab="linkedin">🔵 LinkedIn <span class="tab-count" id="count-linkedin">0</span></button>
@@ -388,7 +429,6 @@
     <button class="tab-btn" data-tab="stats">📊 Stats</button>
   </div>
 
-  <!-- Jobs Table -->
   <div id="jobsPage">
     <div class="table-wrapper">
       <table>
@@ -399,6 +439,7 @@
             <th>Portal</th>
             <th>Status</th>
             <th>Date Applied</th>
+            <th>Note</th>
             <th>Delete</th>
           </tr>
         </thead>
@@ -410,7 +451,6 @@
     </div>
   </div>
 
-  <!-- Stats Page -->
   <div id="statsPage">
     <div class="stats-grid">
       <div class="stats-big-card">
@@ -431,7 +471,6 @@
     </div>
 
     <div class="stats-row">
-      <!-- Status breakdown -->
       <div class="stats-panel">
         <h3>Status Breakdown</h3>
         <div class="bar-row">
@@ -456,7 +495,6 @@
         </div>
       </div>
 
-      <!-- Portal breakdown -->
       <div class="stats-panel">
         <h3>Portal Breakdown</h3>
         <div class="portal-row">
@@ -477,7 +515,6 @@
       </div>
     </div>
 
-    <!-- Recent 5 -->
     <div class="stats-panel">
       <h3>Recently Applied</h3>
       <ul class="recent-list" id="recentList"></ul>
