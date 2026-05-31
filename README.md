@@ -1,16 +1,18 @@
-# 🗂️ Job Tracker - Chrome Extension
-
-A Chrome extension to track your job applications directly from your browser — no more spreadsheets or forgetting where you applied!
-
+# Job Tracker — Chrome Extension
+ 
+A Chrome extension that auto-detects job listings and lets you track all your applications in one dashboard.
+ 
 ---
-
-## ✨ Features
-
-- 📋 **Track applications** — Save job applications while browsing
-- 🔔 **Notifications & reminders** — Get alerted to follow up on applications
-- 📊 **Dashboard** — View all your applications in one place
-- 🤝 **Auto-detect job sites** — Works seamlessly on LinkedIn, Indeed, and Naukri
-
+ 
+## Features
+ 
+- **Auto-scrape** — Reads job title and company from the page automatically
+- **One-click save** — Save any job from the popup without typing
+- **Dashboard** — View all applications with status tracking and stats
+- **Portal tabs** — Filter by LinkedIn, Indeed, or Naukri
+- **Stats page** — Track applications by day, week, and month
+- **Notes** — Add personal notes to each application
+- **Export CSV** — Download all applications as a spreadsheet
 ---
 
 ## 🌐 Supported Job Sites
@@ -33,7 +35,7 @@ Since this extension is not yet on the Chrome Web Store, you can install it manu
 3. Enable **Developer Mode** (toggle in the top right)
 4. Click **Load Unpacked**
 5. Select the `job-tracker` folder
-6. The extension icon will appear in your toolbar ✅
+6. The extension icon will appear in your toolbar 
 
 ---
 
@@ -64,19 +66,19 @@ job-tracker/
 
 ---
 
-## 🔧 Tech Stack
-
-- **Manifest V3** — Latest Chrome Extension standard
-- **Vanilla JavaScript** — No frameworks
-- **Chrome Storage API** — For saving application data locally
-- **Chrome Alarms & Notifications API** — For follow-up reminders
-
+## Tech Stack
+ 
+- Chrome Extension API (Manifest V3)
+- Vanilla JavaScript
+- Chrome Storage API
+- Chrome Scripting API
+- JSON-LD + document.title parsing for scraping
 ---
 
 > 🚧 **Work in Progress** — This project is actively being developed. Features may change!
 
 ---
 
-## 👩‍💻 Author
+## Author
 
 Made by [vaishbil](https://github.com/vaishbil)
