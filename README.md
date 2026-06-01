@@ -23,7 +23,7 @@ A Chrome extension that auto-detects job listings and lets you track all your ap
 
 ---
 
-## 🛠️ Installation (Load Unpacked)
+## 🛠️ Installation 
 
 Since this extension is not yet on the Chrome Web Store, you can install it manually:
 
@@ -54,7 +54,6 @@ job-tracker/
 │   └── dashboard.js       # Dashboard logic
 └── icons/                 # Extension icons
 ```
-
 ---
 
 ## 🚀 How to Use
